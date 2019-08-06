@@ -17,6 +17,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/explicit-member-accessibility': 0,
+    '@typescript-eslint/no-non-null-assertion': 0,
   },
   overrides: [
     {

@@ -5,7 +5,7 @@ const inis = 'pbtdkgxjfvlrmnsz'.split('');
 const mids = 'auie'.split('');
 
 const back = [inis, mids].map(chars => {
-  let map = {} as any;
+  let map: { [key: string]: number } = {};
 
   for (let i = 0; i < chars.length; ++i) {
     map[chars[i]] = i;
@@ -20,17 +20,14 @@ const syllableFromB64 = (b64: number): string => {
   return inis[ini] + mids[mid];
 };
 
-const syllableToB64 = (syllable: string): any => {
+const syllableToB64 = (syllable: string): number => {
   const ini = back[0][syllable[0]];
   const mid = back[1][syllable[1]];
   return ini * 4 + mid;
 };
 
-const b64sFromBytes = bytes => {
-  //BoooooBoooooBoooooBooooo
-  //BoooooooBoooooooBoooooooconst Bytes = require('./bytes');
-  let b64s = [],
-    b64;
+const b64sFromBytes = (bytes: number[]): number[] => {
+  let b64s = [];
   for (let i = 0, l = Math.ceil((bytes.length * 8) / 6); i < l; ++i) {
     let j = ((i / 8) * 6) | 0;
     b64s.push(
@@ -46,7 +43,7 @@ const b64sFromBytes = bytes => {
   return b64s;
 };
 
-const b64sToBytes = b64s => {
+const b64sToBytes = (b64s: number[]): number[] => {
   let bytes = [];
   for (let i = 0, l = Math.floor((b64s.length * 6) / 8); i < l; ++i) {
     let j = ((i / 6) * 8) | 0;
@@ -61,13 +58,13 @@ const b64sToBytes = b64s => {
   return bytes;
 };
 
-const fromBytes = bytes =>
+const fromBytes = (bytes: string): string =>
   b64sFromBytes(Bytes.toArray(bytes))
     .map(syllableFromB64)
     .join('');
 
-const toBytes = syllables =>
-  Bytes.fromArray(b64sToBytes(syllables.match(/\w\w/g).map(syllableToB64)));
+const toBytes = (syllables: string): string =>
+  Bytes.fromArray(b64sToBytes(syllables.match(/\w\w/g)!.map(syllableToB64)));
 
 module.exports = {
   fromBytes,
