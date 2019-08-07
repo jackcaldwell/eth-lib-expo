@@ -66,7 +66,4 @@ const fromBytes = (bytes: string): string =>
 const toBytes = (syllables: string): string =>
   Bytes.fromArray(b64sToBytes(syllables.match(/\w\w/g)!.map(syllableToB64)));
 
-module.exports = {
-  fromBytes,
-  toBytes,
-};
+export { fromBytes, toBytes };

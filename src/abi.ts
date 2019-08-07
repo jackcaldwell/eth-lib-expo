@@ -1,4 +1,6 @@
 import * as Bytes from './bytes';
+import * as Hash from './hash';
+import * as Nat from './nat';
 
 interface EncodeResult {
   data: string;
@@ -21,12 +23,21 @@ const encode = (type: string, value: string): EncodeResult => {
   }
 };
 
+interface Input {
+  type: string;
+}
+
+interface Method {
+  name: string;
+  inputs: Input[];
+}
+
 // (method : Method), [JSType(method.inputs[i].type)] -> Bytes
 //   ABI-encodes the transaction data to call a method.
-const methodData = (method: any, params: any[]): string => {
+const methodData = (method: Method, params: string[]): string => {
   const methodSig =
-    method.name + '(' + method.inputs.map((i: any) => i.type).join(',') + ')';
-  const methodHash = keccak256s(methodSig).slice(0, 10);
+    method.name + '(' + method.inputs.map(i => i.type).join(',') + ')';
+  const methodHash = Hash.keccak256s(methodSig).slice(0, 10);
   let encodedParams = params.map((param, i) =>
     encode(method.inputs[i].type, param)
   );
@@ -46,3 +57,5 @@ const methodData = (method: any, params: any[]): string => {
   }
   return Bytes.flatten([methodHash, headBlock, dataBlock]);
 };
+
+export { encode, methodData };

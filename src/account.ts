@@ -6,11 +6,25 @@
 // const { keccak256, keccak256s } = require('./hash');
 
 import * as Bytes from './bytes';
+import { keccak256, keccak256s } from './hash';
+import * as Nat from './nat';
+
+const toChecksum = (address: string): string => {
+  const addressHash = keccak256s(address.slice(2));
+  let checksumAddress = '0x';
+  for (let i = 0; i < 40; i++)
+    checksumAddress +=
+      parseInt(addressHash[i + 2], 16) > 7
+        ? address[i + 2].toUpperCase()
+        : address[i + 2];
+  return checksumAddress;
+};
 
 interface Account {
   address: string;
   privateKey: string;
 }
+
 const fromPrivate = (privateKey: string): Account => {
   const buffer = new Buffer(privateKey.slice(2), 'hex');
   const ecKey = secp256k1.keyFromPrivate(buffer);
@@ -33,17 +47,6 @@ const create = async (entropy: string): Promise<Account> => {
   );
   const outerHex = keccak256(middleHex);
   return fromPrivate(outerHex);
-};
-
-const toChecksum = (address: string): string => {
-  const addressHash = keccak256s(address.slice(2));
-  let checksumAddress = '0x';
-  for (let i = 0; i < 40; i++)
-    checksumAddress +=
-      parseInt(addressHash[i + 2], 16) > 7
-        ? address[i + 2].toUpperCase()
-        : address[i + 2];
-  return checksumAddress;
 };
 
 const encodeSignature = ([v, r, s]: string[]): string =>
