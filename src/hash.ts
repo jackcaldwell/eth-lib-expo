@@ -467,9 +467,9 @@ const keccak = (bits: number): Function => (str: string): string | number[] => {
   return update(Keccak(bits), msg);
 };
 
-module.exports = {
-  keccak256: keccak(256),
-  keccak512: keccak(512),
-  keccak256s: keccak(256),
-  keccak512s: keccak(512),
-};
+const keccak256 = keccak(256);
+const keccak512 = keccak(512);
+const keccak256s = keccak(256);
+const keccak512s = keccak(512);
+
+export { keccak256, keccak512, keccak256s, keccak512s };
