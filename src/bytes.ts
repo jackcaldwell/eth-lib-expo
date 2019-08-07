@@ -12,12 +12,12 @@ const random = async (bytes: number): Promise<string> => {
   return hex;
 };
 
-const length = (a: string): number => (a.length - 2) / 2;
+const length = (a: string | string[]): number => (a.length - 2) / 2;
 
 const flatten = (a: string[]): string =>
   '0x' + a.reduce((r, s) => r + s.slice(2), '');
 
-const slice = (i: number, j: number, bs: string): string =>
+const slice = (i: number, j: number, bs: string | string[]): string =>
   '0x' + bs.slice(i * 2 + 2, j * 2 + 2);
 
 const reverse = (hex: string): string => {

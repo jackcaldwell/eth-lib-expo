@@ -1,13 +1,9 @@
-// const Bytes = require('./bytes');
-// const Nat = require('./nat');
-// const elliptic = require('elliptic');
-// const rlp = require('./rlp');
-// const secp256k1 = new elliptic.ec('secp256k1'); // eslint-disable-line
-// const { keccak256, keccak256s } = require('./hash');
-
+import elliptic from 'elliptic';
 import * as Bytes from './bytes';
 import { keccak256, keccak256s } from './hash';
 import * as Nat from './nat';
+
+const secp256k1 = new elliptic.ec('secp256k1');
 
 const toChecksum = (address: string): string => {
   const addressHash = keccak256s(address.slice(2));
@@ -20,12 +16,12 @@ const toChecksum = (address: string): string => {
   return checksumAddress;
 };
 
-interface Account {
+export interface AccountInterface {
   address: string;
   privateKey: string;
 }
 
-const fromPrivate = (privateKey: string): Account => {
+const fromPrivate = (privateKey: string): AccountInterface => {
   const buffer = new Buffer(privateKey.slice(2), 'hex');
   const ecKey = secp256k1.keyFromPrivate(buffer);
   const publicKey = '0x' + ecKey.getPublic(false, 'hex').slice(2);
@@ -37,7 +33,7 @@ const fromPrivate = (privateKey: string): Account => {
   };
 };
 
-const create = async (entropy: string): Promise<Account> => {
+const create = async (entropy: string): Promise<AccountInterface> => {
   const innerHex = keccak256(
     Bytes.concat(await Bytes.random(32), entropy || (await Bytes.random(32)))
   );
@@ -49,10 +45,10 @@ const create = async (entropy: string): Promise<Account> => {
   return fromPrivate(outerHex);
 };
 
-const encodeSignature = ([v, r, s]: string[]): string =>
+const encodeSignature = ([v, r, s]: string | string[]): string =>
   Bytes.flatten([r, s, v]);
 
-const decodeSignature = (hex: string): string[] => [
+const decodeSignature = (hex: string | string[]): string[] | string => [
   Bytes.slice(64, Bytes.length(hex), hex),
   Bytes.slice(0, 32, hex),
   Bytes.slice(32, 64, hex),
@@ -66,7 +62,7 @@ const makeSigner = (addToV: number): Function => (
     .keyFromPrivate(new Buffer(privateKey.slice(2), 'hex'))
     .sign(new Buffer(hash.slice(2), 'hex'), { canonical: true });
   return encodeSignature([
-    Nat.fromString(Bytes.fromNumber(addToV + signature.recoveryParam)),
+    Nat.fromString(Bytes.fromNumber(addToV + signature.recoveryParam!)),
     Bytes.pad(32, Bytes.fromNat('0x' + signature.r.toString(16))),
     Bytes.pad(32, Bytes.fromNat('0x' + signature.s.toString(16))),
   ]);
