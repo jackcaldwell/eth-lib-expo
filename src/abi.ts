@@ -34,6 +34,7 @@ interface Method {
 
 // (method : Method), [JSType(method.inputs[i].type)] -> Bytes
 //   ABI-encodes the transaction data to call a method.
+
 const methodData = (method: Method, params: string[]): string => {
   const methodSig =
     method.name + '(' + method.inputs.map(i => i.type).join(',') + ')';
