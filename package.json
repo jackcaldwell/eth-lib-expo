@@ -44,7 +44,7 @@
   "dependencies": {
     "@unimodules/core": "^3.0.2",
     "bn.js": "^5.0.0",
-    "elliptic": "^6.5.0",
+    "elliptic": "^6.5.3",
     "expo-random": "^6.0.0",
     "xhr-request-promise": "^0.1.2"
   }
